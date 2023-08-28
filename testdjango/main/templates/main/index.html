@@ -1,0 +1,22 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+    {{title}}
+{% endblock %}
+
+{% block content %}
+    <h1>Главная страница</h1>
+    {% if task %}
+        {% for el in task %}
+            <div class="alert alert-warning mt-2">
+                <h3>{{el.title}}</h3>
+                <p>{{el.task}}</p>
+                <a class="btn btn-warning" href="{{ el.url_delete }}">Удалить</a>
+                <a class="btn btn-warning" href="{{ el.url_update }}">Обновить</a>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>у вас нету записей</p>
+    {% endif %}
+{% endblock %}  
+

@@ -1,0 +1,16 @@
+{% extends 'main/index.html' %}
+
+
+{% block title %}
+    удаление
+{% endblock %}
+
+
+{% block content %}
+    <h1>Удалить запись</h1>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success">Удалить</button>
+        <span>{{ error }}</span>
+    </form>
+{% endblock %}
