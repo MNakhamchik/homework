@@ -8,6 +8,6 @@ def tradet(prices):
         return min(prices) - max(prices)
 
 
-prices = [7, 1, 9, 3, 6, 4]   #выход: 8
+prices = [7, 1, 4, 3, 6, 4]   #выход: 8
 # prices = [5,2,1,1,1]   #выход: 0
 print(tradet(prices))
