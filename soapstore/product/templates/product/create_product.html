@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Product</title>
+    <style>
+         .h2{
+            text-align: left;
+            margin: 0;
+            padding: 0;
+            color: #ffeba7;
+            font-family: sans-serif;
+            letter-spacing: 1px;
+            font-weight: 300;
+
+         }
+         body{
+            overflow-x: hidden;
+            background-color: #1f2029;
+            margin: 0;
+            padding: 0;
+            color: #ffeba7;
+            font-family: sans-serif;
+            letter-spacing: 1px;
+            font-weight: 300;
+
+         }
+        .logo{
+            padding:1vh 1vw;
+            text-align: center;
+         }
+         .logo img {
+            height: 5rem;
+            width: 5rem;
+         }
+        .container {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              height: 100vh; /* Высота контейнера (можно использовать другие значения) */
+              margin-bottom: 10px;
+              margin-top: -170px;
+         }
+
+        #myButton {
+                color: #131418;
+                background-color: #f2f5f7;
+                border:1.5px solid #f2f5f7;
+                transition: all ease-in-out 350ms;
+                align-items: center;
+                justify-content: center;
+        }
+        .centered-text {
+              text-align: center;
+              margin-top: 50px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h2 class="centered-text">Создание товара</h2>
+       <div class="container">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+
+                <button type="submit" id="myButton">Создать</button>
+            </form>
+        </div>
+</body>
+</html>

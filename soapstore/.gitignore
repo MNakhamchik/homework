@@ -1,0 +1,7 @@
+venv/
+.idea/
+db.sqlite3
+__pycache__/
+0001_initial.py
+0002_product_in_cart.py
+0003_order_cart_item.py
