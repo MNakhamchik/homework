@@ -23,7 +23,7 @@ class SubCategory(models.Model):  #подкатегория товаров
 
 class Product(models.Model):   #товар
     name = models.CharField(max_length=100)  #поле имени товара.
-    photo = models.ImageField(upload_to='product_photos')  #изображение
+    photo = models.ImageField(upload_to='product_photos', blank=True)  #изображение
     description = models.TextField()# описания товара
     weight = models.DecimalField(max_digits=6, decimal_places=2)#вес товара
     price = models.DecimalField(max_digits=8, decimal_places=2)#цены товара
@@ -33,21 +33,10 @@ class Product(models.Model):   #товар
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     subcategory = models.ForeignKey(SubCategory, on_delete=models.CASCADE, related_name='products')
     is_product_of_the_week = models.BooleanField(default=False)
-    orders = models.ManyToManyField('Order', related_name='products')  # модель для заказа
-    reviews = models.ManyToManyField('Review', related_name='reviews')
-    rating = models.FloatField(default=0)
-    in_cart = models.BooleanField(default=False)
+    rating = models.DecimalField(max_digits=3, decimal_places=2, default=0.0)
 
     def __str__(self):
         return self.name
-    #
-    # def update_rating(self):  # обновление рейтинга на основе отзывов
-    #     all_reviews = self.reviews.all()
-    #     review_count = all_reviews.count()
-    #     if review_count > 0:
-    #         total_rating = sum([review.rating for review in all_reviews])
-    #         self.rating = total_rating / review_count
-    #         self.save()
 
 
 class Review(models.Model): #отзывы
@@ -58,23 +47,10 @@ class Review(models.Model): #отзывы
     review_id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
 
 
-# class WeeklyProduct(models.Model):  #товары недели
-#     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-
-
-# class PopularProduct(models.Model):     #популярные товары
-#     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-
-
 class Cart(models.Model):  # корзина
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
-    products = models.ManyToManyField(Product)
-
-    @property
-    def total_cost(self):
-        return sum(item.total_price for item in self.items.all())
 
     def __str__(self):
         return f"Cart for {self.user.username}"
@@ -85,6 +61,7 @@ class CartItem(models.Model): #конкретные товары добавле�
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='cart_items', null=True)  # пользователь, который оставил отзыв
 
     @property
     def total_price(self):

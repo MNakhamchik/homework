@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оформление заказа</title>
+</head>
+<body>
+
+  <h1>Оформление заказа</h1>
+
+  <form method="post">
+    {% csrf_token %}
+    <!-- Форма для информации о заказе -->
+    <label for="name">ФИО:</label>
+    <input type="text" id="name" name="name"><br><br>
+
+    <label for="address">Адрес:</label>
+    <input type="text" id="address" name="address"><br><br>
+
+    <label for="phone">Номер телефона:</label>
+    <input type="text" id="phone" name="phone"><br><br>
+
+    <!-- Дополнительные поля для информации о заказе -->
+
+    <button type="submit">Оформить заказ</button>
+  </form>

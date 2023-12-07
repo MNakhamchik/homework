@@ -449,35 +449,61 @@
     justify-content: space-around;
     padding: 20px;
 }
-.cart-summary {
-    margin-top: 20px;
+
+.product-card {
+    position: relative;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(232, 46, 46, 0.1);
+    margin: 20px;
+    padding: 20px;
+    max-width: 300px;
+    text-align: center;
+    overflow: hidden;
+}
+
+.product-card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.product-name {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(116, 5, 5, 0.7);
+    color: rgb(78, 49, 185), 0, 0);
     padding: 10px;
-    background-color: #714a65;
-    border: 1px solid #ddd;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.product-card:hover .product-name {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.product-card p {
+    color: #777;
+    margin-top: 60px; /* Adjust to leave space for the product name rectangle */
+}
+
+.product-card button {
+    background-color: #61DAFB;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
     border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-.category {
-    margin-bottom:17px;
+.product-card button:hover {
+    background-color: #2c7bb6;
 }
 
-.category a {
-    display: block;
-    font-weight: bold;
-    text-decoration: none;
-    color: #ffeba7;
-    margin-bottom: 5px;
-}
-
-.subcategory-list a {
-    margin-left: 15px;
-    color: #ffeba7;
-    text-decoration: none;
-}
-
-.subcategory-list a:hover {
-    color: #000;
-}
    </style>
     <!--<link rel="stylesheet" href="static/homecatalog.css">-->
 
@@ -515,7 +541,7 @@
             //Hamburger Animation
             hamburger.classList.toggle("toggle");
         });
-   </script>
+<!--    </script>-->
 <!--    <section class="hamburger">-->
 <!--        &lt;!&ndash; Add your product cards here &ndash;&gt;-->
 <!--        <div class="product-card">-->
@@ -532,19 +558,13 @@
 <div class="w3-main w3-content w3-padding" style="max-width:1200px;margin-top:100px">
 
   <!-- First Photo Grid-->
-
-    <div class="cart-summary">
-         {% for category in categories  %}
-      	     <div class="category">
-                <a href="category_detail">{{ category.category }}</a>
-                <div class="subcategory-list">
-                    {% for subcategory in category.category %}
-                      <a href="/subcategory/{{ id }}">{{ subcategory.name_subcategory }}</a>
-                    {% endfor %}
-                </div>
-             </div>
-         {% endfor %}
-    </div>
+   <div class="cart-summary">
+       <div class="subcategory-list">
+            {% for subcategory in category %}
+              <a href="/subcategory/{{ id }}">{{ subcategory.name_subcategory }}</a>
+            {% endfor %}
+       </div>
+   </div>
 
 <!--          {% for product in products %}-->
 <!--            <div class="w3-quarter">-->
@@ -555,7 +575,7 @@
 <!--            </div>-->
 <!--          {% endfor %}-->
 
-</div>
+  </div>
 
   <!-- Second Photo Grid-->
 

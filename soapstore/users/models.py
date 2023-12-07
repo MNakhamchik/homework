@@ -12,8 +12,6 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(default=True)   #активен ли пользователь
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
 
-    # objects = CreatingUser()
-
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = ['full_name', 'email', 'phone_number']
 

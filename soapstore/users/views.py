@@ -9,6 +9,10 @@ from product.models import Product, Cart, CartItem, Order
 from .forms import RegistrationForm, LoginForm
 
 
+def homepage(request): #главная страница
+    return render(request, 'product/home.html')
+
+
 # вход
 def user_login(request):
     if request.method == 'POST':
@@ -43,7 +47,8 @@ def user_register(request):  # регистрации
 
 # отображения корзины
 def view_cart(request):
-    cart_items = CartItem.objects.filter(user=request.user)
+    user = request.user
+    cart_items = CartItem.objects.get(user=user)
     #расчет общей суммы
     total_price = sum(item.product.price * item.quantity for item in cart_items)
 
@@ -75,7 +80,7 @@ def checkout(request):
             # Удаление товаров из базы данных после оформления заказа
             cart.items.all().delete()
 
-            return redirect('order_confirmation_page') 
+            return redirect('home')
 
     return render(request, 'checkout.html')
 
@@ -84,30 +89,19 @@ def checkout(request):
 def add_to_cart(request, pk):
     # Получаем продукт по его ID
     product = get_object_or_404(Product, id=pk)
-
-    # Получаем или создаем корзину для текущего пользователя
     cart, created = Cart.objects.get_or_create(user=request.user)
+    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+    cart_item.quantity += 1
+    cart_item.save()
 
-    # Проверяем, есть ли уже этот продукт в корзине
-    if product.in_cart:
-        # Если есть, увеличиваем количество
-        cart_item = cart.cart_items.get(product=product)
-        cart_item.quantity += 1
-        cart_item.save()
-    else:
-        # Если нет, добавляем новый элемент в корзину
-        cart_item = cart.cart_items.create(product=product, quantity=1)
-        product.in_cart = True 
-        product.save()
-
-    return render(request, 'cart.html')
+    return redirect('cart')
 
 
 #очищение в корзины
 def clear_cart(request):
     if request.method == 'POST':
         user = request.user
-        cart_items = CartItem.objects.filter(user=user)
+        cart_items = CartItem.objects.get(user=user)
 
         # Очистка корзины
         cart_items.delete()
@@ -122,7 +116,7 @@ def clear_cart(request):
 def remove_item_from_cart(request, pk):
     # Получаем текущего пользователя
     user = request.user
-    cart = Cart.objects.get_or_create(user=user)
+    cart = Cart.objects.get(user=user)
     item = get_object_or_404(CartItem, id=pk, cart=cart)
     price = item.product.price
     # Удаляем товар из корзины
@@ -138,7 +132,7 @@ def remove_item_from_cart(request, pk):
 #изменение количества товаров
 def update_cart_item(request, pk):
     user = request.user
-    cart = Cart.objects.get_or_create(user=user)
+    cart = Cart.objects.get(user=user)
     item = get_object_or_404(CartItem, id=pk, cart=cart)
 
     if request.method == 'POST':

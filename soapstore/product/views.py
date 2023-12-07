@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count
+from django.db.models import Count, Avg
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ProductForm, CategoryForm, ReviewForm
 from .models import Product, Category, Review
@@ -85,6 +85,20 @@ def create_review(request, pk):     # отзывы к товарам
         form = ReviewForm()
 
     return render(request, 'create_review.html', {'form': form, 'product': product})
+
+
+def add_review(request, pk):
+    product = Product.objects.get(id=pk)
+    user = request.user
+    rating = request.POST.get('rating')
+    comment = request.POST.get('comment')
+
+    # Создаем отзыв
+    review = Review.objects.create(product=product, user=user, rating=rating, comment=comment)
+
+    # Обновляем средний рейтинг товара
+    product.average_rating = product.reviews.aggregate(Avg('rating'))['rating__avg'] or 0.0
+    product.save()
 
 
 def products_of_the_week(request):  #товаров недели

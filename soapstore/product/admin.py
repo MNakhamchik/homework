@@ -10,4 +10,7 @@ admin.site.register(SubCategory)
 admin.site.register(CartItem)
 
 
-# Marina - 1234567
+# Marina - 12345678az
+
+
+# Anna - az12345QAZ

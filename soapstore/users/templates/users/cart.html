@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интернет-магазин</title>
+    <style>
+        /* Простые стили для отображения товаров и корзины */
+        #catalog, #cart {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .product, .cart-item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px;
+            text-align: center;
+        }
+
+        #cart {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cart-summary">
+        {% for cart in carts %}
+            <h2>Cart Summary</h2>
+            <ul>
+                {% for cartitem in cart.items.all %}
+                    <li>{{ item.product.name }} - Quantity: {{ item.quantity }} - Price: ${{ item.product.price }}</li>
+                {% endfor %}
+            </ul>
+            <p>Total Items: <span id="total-items">{{ cart.total_items }}</span></p>
+            <p>Total Price: $<span id="total-price">{{ cart.total_price }}</span></p>
+
+            <!-- Delivery options -->
+            <form action="{% url 'checkout' %}" method="post">
+                {% csrf_token %}
+                <label for="delivery-method">Delivery Method:</label>
+                <select class="checkout-button" id="delivery-method" name="delivery-method">
+                    <option value="self-pickup">Self Pickup</option>
+                    <option value="courier">Courier</option>
+                    <option value="mail">Mail</option>
+                </select>
+
+                <!-- Additional fields based on the selected delivery method -->
+                <!-- ... -->
+
+                <!-- Payment options -->
+                <label for="payment-method">Payment Method:</label>
+                <select class="checkout-button" id="payment-method" name="payment-method">
+                    <option value="credit-card">Credit Card</option>
+                    <option value="paypal">PayPal</option>
+                    <!-- Add more payment options as needed -->
+                </select>
+
+                <button type="submit" class="checkout-button">Checkout</button>
+            </form>
+        {% endfor %}
+        </div>
+
+    <script>
+        // JavaScript для добавления товаров в корзину
+        document.addEventListener('DOMContentLoaded', function () {
+            const catalog = document.getElementById('catalog');
+            const cart = document.getElementById('cart');
+
+            catalog.addEventListener('click', function (event) {
+                const target = event.target;
+                if (target.classList.contains('product')) {
+                    const productId = target.dataset.id;
+                    const productName = target.dataset.name;
+                    const productPrice = target.dataset.price;
+
+                    // Создаем элемент для отображения товара в корзине
+                    const cartItem = document.createElement('div');
+                    cartItem.classList.add('cart-item');
+                    cartItem.innerHTML = `${productName} - $${productPrice}`;
+
+                    // Добавляем товар в корзину
+                    cart.appendChild(cartItem);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

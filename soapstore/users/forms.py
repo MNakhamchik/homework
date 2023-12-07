@@ -4,7 +4,6 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField, UserCreationFor
 from django.core.exceptions import ValidationError
 
 
-
 class RegistrationForm(UserCreationForm):  #регистрация
     class Meta:
         model = User
