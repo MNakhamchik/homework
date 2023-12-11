@@ -5,9 +5,13 @@ from django.core.exceptions import ValidationError
 
 
 class RegistrationForm(UserCreationForm):  #регистрация
+    email = forms.EmailField(required=True)
+    full_name = forms.CharField(required=True)
+    phone_number = forms.CharField(required=True)
+
     class Meta:
         model = User
-        fields = ('full_name', 'email', 'phone_number')
+        fields = ('full_name', 'email', 'phone_number', 'password1', 'password2')
 
     def clean_phone_number(self):   #проверяет, есть ли уже номер телефона
         phone_number = self.cleaned_data.get('phone_number')

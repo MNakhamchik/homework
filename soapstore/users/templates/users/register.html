@@ -1,12 +1,11 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <title>Webleb</title>
+  <title>Вход | Регистрация</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.9/css/unicons.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/css/register.css">
   <style>
     @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700,800,900');
 body{
@@ -269,14 +268,14 @@ display: none;
                   <div class="section text-center">
                     <h4 class="mb-4 pb-3">Вход</h4>
                     <div class="form-group">
-                      <input type="email" class="form-style" placeholder="Email">
+                      <input type="text" class="form-style" placeholder="Phone number">
                       <i class="input-icon uil uil-at"></i>
                     </div>
                     <div class="form-group mt-2">
                       <input type="password" class="form-style" placeholder="Password">
                       <i class="input-icon uil uil-lock-alt"></i>
                     </div>
-                    <a href="home.html" class="btn mt-4">Войти</a>
+                    <a href="{% url 'users:login' %}" class="btn mt-4">Войти</a>
                     <p class="mb-0 mt-4 text-center"><a href="" class="link"></a></p>
                       </div>
                     </div>
@@ -285,20 +284,47 @@ display: none;
                 <div class="center-wrap">
                   <div class="section text-center">
                     <h4 class="mb-3 pb-3">Регистрация</h4>
-                    <div class="form-group">
-                      <input type="text" class="form-style" placeholder="Username">
-                      <i class="input-icon uil uil-user"></i>
-                    </div>
-                    <div class="form-group mt-2">
-                      <input type="email" class="form-style" placeholder="Email">
-                      <i class="input-icon uil uil-at"></i>
-                    </div>
-                    <div class="form-group mt-2">
-                      <input type="password" class="form-style" placeholder="Password">
-                      <i class="input-icon uil uil-lock-alt"></i>
-                    </div>
-                    <a href="home.html" class="btn mt-4">Регистрация</a>
-                      </div>
+                      <form action="{% url 'users:register' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                          <div class="form-style" type="text" placeholder="Username">
+                             {{ form.full_name }}
+                             <i class="input-icon uil uil-user"></i>
+                          </div>
+                        </div>
+                        <div class="form-group mt-2">
+                          <div class="form-style" type="text" placeholder="Username">
+                             {{ form.email }}
+                            <i class="input-icon uil uil-at"></i>
+                          </div>
+                        </div>
+                        <div class="form-group mt-2">
+                          <div class="form-style" type="text" placeholder="Username">
+                             {{ form.phone_number }}
+                            <i class="input-icon uil uil-phone"></i>
+                             <style>
+                                .form-style input {
+                                    background-color: #4e404e; /* Светло-серый фон */
+                                    color: #ffeba7; /* Цвет текста */
+
+                                }
+                            </style>
+                          </div>
+                        </div>
+                        <div class="form-group mt-2">
+                          <div class="form-style" type="text" placeholder="Username">
+                             {{ form.password1 }}
+                            <i class="input-icon uil uil-lock-alt"></i>
+                          </div>
+                        </div>
+                         <div class="form-group mt-2">
+                          <div class="form-style" type="text" placeholder="Username">
+                             {{ form.password2 }}
+                            <i class="input-icon uil uil-lock-alt"></i>
+                          </div>
+                        </div>
+                        <button type="submit" class="btn mt-4">Регистрация</button>
+                      </form>
                     </div>
                   </div>
                 </div>

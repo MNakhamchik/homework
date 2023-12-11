@@ -29,7 +29,7 @@ def user_login(request):
     else:
         form = LoginForm()
 
-    return render(request, 'register.html', {'form': form})
+    return render(request, 'users/register.html', {'form': form})
 
 
 def user_register(request):  # регистрации
@@ -37,6 +37,7 @@ def user_register(request):  # регистрации
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
+            user.save()
             login(request, user)
             return redirect('home')
     else:
@@ -48,7 +49,7 @@ def user_register(request):  # регистрации
 # отображения корзины
 def view_cart(request):
     user = request.user
-    cart_items = CartItem.objects.get(user=user)
+    cart_items = CartItem.objects.filter(user=user.id)
     #расчет общей суммы
     total_price = sum(item.product.price * item.quantity for item in cart_items)
 
@@ -57,7 +58,7 @@ def view_cart(request):
         'total_price': total_price,
     }
 
-    return render(request, 'cart.html', context)
+    return render(request, 'users/cart.html', context)
 
 
 #оформление заказа
@@ -89,11 +90,17 @@ def checkout(request):
 def add_to_cart(request, pk):
     # Получаем продукт по его ID
     product = get_object_or_404(Product, id=pk)
-    cart, created = Cart.objects.get_or_create(user=request.user)
-    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
-    cart_item.quantity += 1
-    cart_item.save()
-
+    if request.user.is_authenticated:
+        # Если пользователь авторизован, добавляем товар в его корзину
+        user = request.user
+        cart, created = Cart.objects.get_or_create(user=user)
+        cart.products.add(product)
+        cart.save()
+    else:
+        # Если пользователь не авторизован, сохраняем товар в сессии
+        cart = request.session.get('cart', [])
+        cart.append(pk)
+        request.session['cart'] = cart
     return redirect('cart')
 
 

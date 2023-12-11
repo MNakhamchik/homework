@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Avg
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ProductForm, CategoryForm, ReviewForm
-from .models import Product, Category, Review
+from .models import Product, Category, Review, SubCategory
 
 
 def homepage(request): #главная страница
@@ -30,17 +30,21 @@ def delete_product(request, pk):   #удаление товаров
     return redirect('product_list')
 
 
-def product_list(request):      #список всех товаров
-    products = Product.objects.all()  # Получаем все объекты модели Product
+def product_list(request, subcategory_id):      #список всех товаров
+    subcategory = get_object_or_404(SubCategory, id=subcategory_id)
+    products = Product.objects.filter(subcategory=subcategory)  # Получаем все объекты модели Product
+    context = {
+        'subcategory': subcategory,
+        'products': products
+    }
+    return render(request, 'product/product_list.html', context)
 
-    return render(request, 'product_list.html', {'products': products})
 
-
-def product_detail(request, pk):  #детальную информацию о выбранном товаре
-    product = get_object_or_404(Product, id=pk)
+def product_detail(request, id):  #детальную информацию о выбранном товаре
+    product = get_object_or_404(Product, id=id)
     context = {'product': product}
 
-    return render(request, 'product_detail.html', context)
+    return render(request, 'product/product_detail.html', context)
 
 
 @login_required
@@ -60,14 +64,14 @@ def category_list(request):     #списка всех категорий
     return render(request, 'product/catalog.html', {'categories': categories})
 
 
-def category_detail(request, category_id):   #детальную информацию о выбранной категории и все товары в этой категории
-    category = get_object_or_404(Category, id=category_id)
-    products = Product.objects.filter(category=category)
+def category_detail(request, category_id):   #детальную информацию о выбранной категории и все подкатегории в этой категории
+    category = get_object_or_404(Category, category_id=category_id)
+    subcategories = SubCategory.objects.filter(category=category)
     context = {
         'category': category,
-        'products': products
+        'subcategories': subcategories
     }
-    return render(request, 'category_detail.html', context)
+    return render(request, 'product/category_detail.html', context)
 
 
 @login_required
@@ -107,7 +111,7 @@ def products_of_the_week(request):  #товаров недели
         'products': products
     }
 
-    return render(request, 'your_app/week_products.html', context)
+    return render(request, 'week_products.html', context)
 
 
 def popular_products(request):   #популярных товаров
