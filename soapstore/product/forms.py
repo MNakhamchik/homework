@@ -41,7 +41,7 @@ class CartItemForm(forms.ModelForm):
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ['product', 'quantity', 'status']  # You can customize the fields as needed
+        fields = ['name', 'address', 'phone']
 
     def __init__(self, *args, **kwargs):
         super(OrderForm, self).__init__(*args, **kwargs)

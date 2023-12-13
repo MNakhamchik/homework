@@ -519,7 +519,7 @@
     <div class="cart-summary">
          <h1>Оформление заказа</h1>
 
-  <form method="post">
+  <form action="{% url 'users:checkout' %}" method="post">
     {% csrf_token %}
     <!-- Форма для информации о заказе -->
     <label for="name">ФИО:</label>
@@ -533,7 +533,7 @@
 
     <!-- Дополнительные поля для информации о заказе -->
 
-    <button href="{% url 'user:checkout' %}" type="submit">Оформить заказ</button>
+    <button type="submit">Оформить заказ</button>
   </form>
 </div>
 
@@ -541,7 +541,6 @@
 
 
   <!-- Pagination -->
-  <
 
   <hr id="about">
 

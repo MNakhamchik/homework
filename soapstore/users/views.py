@@ -23,12 +23,13 @@ def user_login(request):
             user = authenticate(request, phone_number=phone_number, password=password)
             if user is not None:
                 login(request, user)
+                messages.error(request, 'успешно') # Добавьте эту строку для сообщения об успешном входе
                 return redirect('home')
             else:
-                return render(request, 'register.html', {'form': form, 'error_message': 'Invalid login credentials'})
+                return render(request, 'register.html', {'form': form})
     else:
         form = LoginForm()
-
+    messages.error(request, 'Неверный логин или пароль')
     return render(request, 'users/register.html', {'form': form})
 
 
@@ -68,6 +69,7 @@ def view_cart(request):
 def checkout(request):
     user = request.user
     cart = Cart.objects.get(user=user)
+    cart_items = CartItem.objects.filter(cart=cart)
 
     if request.method == 'POST':
         form = OrderForm(request.POST)
@@ -75,6 +77,8 @@ def checkout(request):
             order = form.save(commit=False)
             order.user = user
             order.cart = cart
+            order.total_amount = sum(item.product.price * item.quantity for item in cart_items)
+
             order.save()
 
             for item in cart.items.all():
@@ -85,7 +89,7 @@ def checkout(request):
 
             return redirect('home')
 
-    return render(request, 'checkout.html')
+    return render(request, 'users/checkout.html')
 
 
 @login_required
@@ -106,7 +110,7 @@ def add_to_cart(request, id):
         # Если товара нет в корзине, создаем новый объект CartItem и добавляем его в корзину
         cart_item = CartItem.objects.create(cart=cart, product=product)
 
-    return render(request, 'users/cart.html')
+    return redirect('users:cart')
 
 
 #очищение в корзины
@@ -119,7 +123,7 @@ def clear_cart(request):
         cart_items.delete()
 
         messages.success(request, 'Корзина очищена успешно!')
-        return redirect('cart')
+        return redirect('users:cart')
 
     return render(request, 'clear_cart.html')
 

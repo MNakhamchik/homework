@@ -94,6 +94,9 @@ class Order(models.Model):  # заказ
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     cart_item = models.ManyToManyField(CartItem)
+    name = models.CharField(max_length=100)
+    address = models.CharField(max_length=255)
+    phone = models.CharField(max_length=20)
 
     class Meta:
         ordering = ['created_at']

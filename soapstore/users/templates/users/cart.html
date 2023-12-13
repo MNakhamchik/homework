@@ -554,8 +554,13 @@
                     <form action="{% url 'users:clear_cart' %}" method="post">
                         {% csrf_token %}
                         <div class="checkout-buttons">
-                            <button type="submit" class="checkout-button">Оформить заказ</button>
                              <button type="submit" class="checkout-button" name="clear-cart">Очистить корзину</button>
+                        </div>
+                    </form>
+                    <form action="{% url 'users:checkout' %}" method="post">
+                        {% csrf_token %}
+                        <div class="checkout-buttons">
+                               <button type="submit" class="checkout-button">Оформить заказ</button>
                         </div>
                     </form>
             </div>
