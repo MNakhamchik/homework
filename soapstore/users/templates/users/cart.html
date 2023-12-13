@@ -515,38 +515,52 @@
             hamburger.classList.toggle("toggle");
         });
    </script>
-<div class="w3-main w3-content w3-padding" style="max-width:1200px;margin-top:100px">
-    <div class="cart-summary">
-         {% for cart in carts %}
-            <h2>Корзина</h2>
-            <ul>
-                {% for cartitem in cart.items.all %}
-                    <li>{{ cartitem.product.name }} - кол-во: {{ cartitem.quantity }} - стоимость: ${{ cartitem.total_price }}</li>
-                {% endfor %}
-            </ul>
-            <p>Итоговая сумма: $<span id="total-price">{{ cart.total_price }}</span></p>
+    <div class="w3-main w3-content w3-padding" style="max-width:1200px;margin-top:100px">
 
-            <!-- Delivery options -->
-            <form action="{% url 'checkout' %}" method="post">
-                {% csrf_token %}
-                <label for="delivery-method">Способы доставки:</label>
-                <select class="checkout-button" id="delivery-method" name="delivery-method">
-                    <option value="self-pickup">Почта</option>
-                    <option value="courier">Самовывоз</option>
-                    <option value="mail">Курьер</option>
-                </select>
 
-                <label for="payment-method">Способы оплаты:</label>
-                <select class="checkout-button" id="payment-method" name="payment-method">
-                    <option value="credit-card">Картой</option>
-                    <option value="paypal">Наличными</option>
-                </select>
+            <div class="cart-summary">
+                <h2>Корзина</h2>
 
-                <button type="submit" class="checkout-button" href="{% url 'user:checkout' %}">Оформить заказ</button>
-                <button type="submit" class="checkout-button" href="{% url 'user:clear_cart' %}">Отчистить корзину</button>
-            </form>
-         {% endfor %}
-   </div>
+                {% if cart_items %}
+                    <ul>
+                         {% for cartitem in cart_items %}
+                            <li>{{ cartitem.product.name }} - количество: {{ cartitem.quantity }} - стоимость: {{ cartitem.total_price }} BYN</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>Ваша корзина пуста</p>
+                {% endif %}
+                     <p>Итоговая сумма: {{ total_price }} BYN</p>
+
+                <!-- Форма для выбора опций доставки и оплаты и оформления заказа -->
+
+                    {% csrf_token %}
+                    <div class="checkout-section">
+                        <label for="delivery-method">Способы доставки:</label>
+                        <select id="delivery-method" name="delivery-method">
+                            <option value="self-pickup">Самовывоз</option>
+                            <option value="courier">Курьер</option>
+                            <option value="mail">Почта</option>
+                        </select>
+                    </div>
+
+                    <div class="checkout-section">
+                        <label for="payment-method">Способы оплаты:</label>
+                        <select id="payment-method" name="payment-method">
+                            <option value="credit-card">Картой</option>
+                            <option value="cash">Наличными</option>
+                        </select>
+                    </div>
+                    <form action="{% url 'users:clear_cart' %}" method="post">
+                        {% csrf_token %}
+                        <div class="checkout-buttons">
+                            <button type="submit" class="checkout-button">Оформить заказ</button>
+                             <button type="submit" class="checkout-button" name="clear-cart">Очистить корзину</button>
+                        </div>
+                    </form>
+            </div>
+
+    </div>
 
   <!-- Second Photo Grid-->
 

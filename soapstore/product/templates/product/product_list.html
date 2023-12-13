@@ -295,6 +295,7 @@
  .nav-links li a{
     text-decoration: none;
     margin: 0 0.7vw;
+    color: #ffeba7;
  }
  .nav-links li a:hover {
     color: #61DAFB;
@@ -440,6 +441,7 @@
     </div>
     <ul class="nav-links">
         <li><a href="{% url 'users:home' %}">Главная</a></li>
+        <li><a href="{% url 'category_list' %}">Каталог</a></li>
         <li><a href="{% url 'users:cart' %}">Корзина</a></li>
         <li><a href="https://www.instagram.com/">Инстаграм</a></li>
         <li><a href="{% url 'users:register' %}">Вход/Регистрация</a></li>
@@ -475,64 +477,22 @@
 
 
 </div>
+  <script>
+            const hamburger = document.querySelector(".hamburger");
+        const navLinks = document.querySelector(".nav-links");
+        const links = document.querySelectorAll(".nav-links li");
 
-<script>
-// Script to open and close sidebar
-function w3_open() {
-  document.getElementById("mySidebar").style.display = "block";
-}
+        hamburger.addEventListener('click', ()=>{
+           //Animate Links
+            navLinks.classList.toggle("open");
+            links.forEach(link => {
+                link.classList.toggle("fade");
+            });
 
-function w3_close() {
-  document.getElementById("mySidebar").style.display = "none";
-}
-// Данные товара, который вы хотите добавить в корзину
-const товар = {
-    id: 1,
-    имя: "Примерный товар",
-    цена: 10.99
-};
+            //Hamburger Animation
+            hamburger.classList.toggle("toggle");
+        });
 
-// Отправка POST-запроса на сервер для добавления товара в корзину
-fetch('/api/добавить_в_корзину', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(товар)
-})
-.then(response => {
-    if (!response.ok) {
-        throw new Error('Ошибка при добавлении товара в корзину');
-    }
-    // Обработка успешного ответа
-    return response.json();
-})
-.then(data => {
-    // Обработка полученных данных
-    console.log('Товар успешно добавлен в корзину:', data);
-})
-.catch(error => {
-    // Обработка ошибок
-    console.error('Произошла ошибка:', error);
-});
-
-</script>
-<script>
-    const hamburger = document.querySelector(".hamburger");
-const navLinks = document.querySelector(".nav-links");
-const links = document.querySelectorAll(".nav-links li");
-
-hamburger.addEventListener('click', ()=>{
-   //Animate Links
-    navLinks.classList.toggle("open");
-    links.forEach(link => {
-        link.classList.toggle("fade");
-    });
-
-    //Hamburger Animation
-    hamburger.classList.toggle("toggle");
-});
-
-</script>
+  </script>
 </body>
 </html>

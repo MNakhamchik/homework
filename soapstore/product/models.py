@@ -51,9 +51,10 @@ class Cart(models.Model):  # корзина
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
+    products = models.ManyToManyField(Product)
 
     def __str__(self):
-        return f"Cart for {self.user.username}"
+        return f"Cart for {self.user}"
 
     @property
     def total_price(self):
@@ -72,7 +73,10 @@ class CartItem(models.Model): #конкретные товары добавле�
         return self.product.price * self.quantity
 
     def __str__(self):
-        return f"{self.quantity}x {self.product.name} in {self.cart.user.username}'s cart"
+        if self.cart.user:
+            return f"{self.quantity}x {self.product.name} в корзине {self.cart.user}"
+
+        return f"{self.quantity}x {self.product.name}"
 
 
 class Order(models.Model):  # заказ

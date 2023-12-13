@@ -295,6 +295,7 @@
  .nav-links li a{
     text-decoration: none;
     margin: 0 0.7vw;
+    color: #ffeba7;
  }
  .nav-links li a:hover {
     color: #61DAFB;
@@ -443,7 +444,7 @@
         <li><a href="{% url 'users:cart' %}">Корзина</a></li>
         <li><a href="https://www.instagram.com/">Инстаграм</a></li>
         <li><a href="{% url 'users:register' %}">Вход/Регистрация</a></li>
-  </nav>
+   </nav>
 <div class="w3-main w3-content w3-padding" style="max-width:1200px;margin-top:100px">
 
 
@@ -453,7 +454,7 @@
              <h1>{{ product.name }}</h1>
             <p><strong>Описание:</strong> {{ product.description }}</p>
             <p><strong>Вес:</strong> {{ product.weight }} kg</p>
-            <p><strong>Цена:</strong> ${{ product.price }}</p>
+            <p><strong>Цена:</strong> {{ product.price }} BYN</p>
             <p><strong>Страна производитель:</strong> {{ product.country }}</p>
             <p><strong>Бренд:</strong> {{ product.brand }}</p>
 

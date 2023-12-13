@@ -267,17 +267,23 @@ display: none;
                 <div class="center-wrap">
                   <div class="section text-center">
                     <h4 class="mb-4 pb-3">Вход</h4>
-                    <div class="form-group">
-                      <input type="text" class="form-style" placeholder="Phone number">
-                      <i class="input-icon uil uil-at"></i>
-                    </div>
-                    <div class="form-group mt-2">
-                      <input type="password" class="form-style" placeholder="Password">
-                      <i class="input-icon uil uil-lock-alt"></i>
-                    </div>
-                    <a href="{% url 'users:login' %}" class="btn mt-4">Войти</a>
-                    <p class="mb-0 mt-4 text-center"><a href="" class="link"></a></p>
-                      </div>
+                     <form action="{% url 'users:home' %}" method="post">
+                       {% csrf_token %}
+                         <div class="form-group mt-2">
+                              <div class="form-style" type="text" placeholder="Username">
+                                 {{ form.phone_number }}
+                                <i class="input-icon uil uil-phone"></i>
+                              </div>
+                         </div>
+                         <div class="form-group mt-2">
+                              <div class="form-style" type="text" placeholder="Username">
+                                 {{ form.password2 }}
+                                <i class="input-icon uil uil-lock-alt"></i>
+                              </div>
+                            </div>
+                            <button type="submit" class="btn mt-4">Войти</button>
+                         </div>
+                    </form>
                     </div>
                   </div>
               <div class="card-back">

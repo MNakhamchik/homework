@@ -19,7 +19,7 @@ def user_login(request):
         form = LoginForm(request.POST)
         if form.is_valid():
             phone_number = form.cleaned_data['phone_number']
-            password = form.cleaned_data['password']
+            password = form.cleaned_data['password2']
             user = authenticate(request, phone_number=phone_number, password=password)
             if user is not None:
                 login(request, user)
@@ -49,11 +49,13 @@ def user_register(request):  # регистрации
 # отображения корзины
 def view_cart(request):
     user = request.user
-    cart_items = CartItem.objects.filter(user=user.id)
+    cart, created = Cart.objects.get_or_create(user=user)
+    cart_items = CartItem.objects.filter(cart=cart)
     #расчет общей суммы
     total_price = sum(item.product.price * item.quantity for item in cart_items)
 
     context = {
+        'cart': cart,
         'cart_items': cart_items,
         'total_price': total_price,
     }
@@ -86,29 +88,32 @@ def checkout(request):
     return render(request, 'checkout.html')
 
 
+@login_required
 #добавление в товара в корзину
-def add_to_cart(request, pk):
-    # Получаем продукт по его ID
-    product = get_object_or_404(Product, id=pk)
-    if request.user.is_authenticated:
-        # Если пользователь авторизован, добавляем товар в его корзину
-        user = request.user
-        cart, created = Cart.objects.get_or_create(user=user)
-        cart.products.add(product)
-        cart.save()
-    else:
-        # Если пользователь не авторизован, сохраняем товар в сессии
-        cart = request.session.get('cart', [])
-        cart.append(pk)
-        request.session['cart'] = cart
-    return redirect('cart')
+def add_to_cart(request, id):
+    # Получение объекта товара или возврат ошибки 404, если он не найден
+    product = get_object_or_404(Product, id=id)
+
+    # Получение объекта корзины пользователя или создание новой, если не существует
+    cart, created = Cart.objects.get_or_create(user=request.user)
+
+    # Пытаемся найти CartItem с таким же продуктом, если он уже в корзине
+    try:
+        cart_item = CartItem.objects.get(cart=cart, product=product)
+        cart_item.quantity += 1  # Если товар уже в корзине, увеличиваем количество
+        cart_item.save()
+    except CartItem.DoesNotExist:
+        # Если товара нет в корзине, создаем новый объект CartItem и добавляем его в корзину
+        cart_item = CartItem.objects.create(cart=cart, product=product)
+
+    return render(request, 'users/cart.html')
 
 
 #очищение в корзины
 def clear_cart(request):
     if request.method == 'POST':
         user = request.user
-        cart_items = CartItem.objects.get(user=user)
+        cart_items = CartItem.objects.filter(user=user)
 
         # Очистка корзины
         cart_items.delete()
