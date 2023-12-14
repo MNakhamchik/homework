@@ -1,11 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from product.forms import OrderForm, UpdateCartItemForm
-from .models import User
-from product.models import Product, Cart, CartItem, Order
+from product.models import Product, Cart, CartItem
 from .forms import RegistrationForm, LoginForm
 
 
@@ -18,18 +16,17 @@ def user_login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            phone_number = form.cleaned_data['phone_number']
-            password = form.cleaned_data['password2']
+            phone_number = form.data['phone_number']
+            password = form.data['password2']
             user = authenticate(request, phone_number=phone_number, password=password)
             if user is not None:
                 login(request, user)
-                messages.error(request, 'успешно') # Добавьте эту строку для сообщения об успешном входе
                 return redirect('home')
             else:
-                return render(request, 'register.html', {'form': form})
+                messages.error(request, 'Неверный логин или пароль')
+                return render(request, 'users/register.html', {'form': form})
     else:
         form = LoginForm()
-    messages.error(request, 'Неверный логин или пароль')
     return render(request, 'users/register.html', {'form': form})
 
 
@@ -84,7 +81,6 @@ def checkout(request):
             for item in cart.items.all():
                 order.items.add(item)
 
-            # Удаление товаров из базы данных после оформления заказа
             cart.items.all().delete()
 
             return redirect('home')
@@ -93,22 +89,17 @@ def checkout(request):
 
 
 @login_required
-#добавление в товара в корзину
+#добавление товара в корзину
 def add_to_cart(request, id):
-    # Получение объекта товара или возврат ошибки 404, если он не найден
     product = get_object_or_404(Product, id=id)
 
     # Получение объекта корзины пользователя или создание новой, если не существует
-    cart, created = Cart.objects.get_or_create(user=request.user)
+    cart, _ = Cart.objects.get_or_create(user=request.user)
 
-    # Пытаемся найти CartItem с таким же продуктом, если он уже в корзине
-    try:
-        cart_item = CartItem.objects.get(cart=cart, product=product)
-        cart_item.quantity += 1  # Если товар уже в корзине, увеличиваем количество
-        cart_item.save()
-    except CartItem.DoesNotExist:
-        # Если товара нет в корзине, создаем новый объект CartItem и добавляем его в корзину
-        cart_item = CartItem.objects.create(cart=cart, product=product)
+    # Обновление либо создание объекта CartItem
+    cart_item, _ = CartItem.objects.get_or_create(cart=cart, product=product)
+    cart_item.quantity += 1  # Увеличиваем количество
+    cart_item.save()
 
     return redirect('users:cart')
 

@@ -43,32 +43,8 @@ class OrderForm(forms.ModelForm):
         model = Order
         fields = ['name', 'address', 'phone']
 
-    def __init__(self, *args, **kwargs):
-        super(OrderForm, self).__init__(*args, **kwargs)
-
 
 class UpdateCartItemForm(forms.Form):
     quantity = forms.IntegerField(min_value=1)
 
 
-
-
-
-
-
-
-
-
-
-
-
-# class WeeklyProductForm(forms.ModelForm):
-#     class Meta:
-#         model = WeeklyProduct
-#         fields = ['product']
-#
-#
-# class PopularProductForm(forms.ModelForm):
-#     class Meta:
-#         model = PopularProduct
-#         fields = ['product']

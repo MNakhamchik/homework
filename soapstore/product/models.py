@@ -103,3 +103,5 @@ class Order(models.Model):  # заказ
 
     def __str__(self):
         return f'Order {self.id}'
+
+

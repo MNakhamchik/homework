@@ -30,6 +30,18 @@ def delete_product(request, pk):   #удаление товаров
     return redirect('product_list')
 
 
+@login_required
+def create_category(request):  #создания и заполнения категорий.
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('category_list')  # Перенаправление на страницу списка категорий
+    else:
+        form = CategoryForm()
+    return render(request, 'create_category.html', {'form': form})
+
+
 def product_list(request, subcategory_id):      #список всех товаров
     subcategory = get_object_or_404(SubCategory, id=subcategory_id)
     products = Product.objects.filter(subcategory=subcategory)  # Получаем все объекты модели Product
@@ -45,18 +57,6 @@ def product_detail(request, id):  #детальную информацию о в
     context = {'product': product}
 
     return render(request, 'product/product_detail.html', context)
-
-
-@login_required
-def create_category(request):  #создания и заполнения категорий.
-    if request.method == 'POST':
-        form = CategoryForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('category_list')  # Перенаправление на страницу списка категорий
-    else:
-        form = CategoryForm()
-    return render(request, 'create_category.html', {'form': form})
 
 
 def category_list(request):     #списка всех категорий
@@ -83,12 +83,13 @@ def create_review(request, pk):     # отзывы к товарам
         if form.is_valid():
             review = form.save(commit=False)
             review.product = product
+            review.user = request.user
             review.save()
-            return redirect('product_detail', product_id=pk)
+            return redirect('product_detail', id=pk)
     else:
         form = ReviewForm()
 
-    return render(request, 'create_review.html', {'form': form, 'product': product})
+    return render(request, 'product/create_review.html', {'form': form, 'product': product})
 
 
 def add_review(request, pk):
@@ -101,8 +102,9 @@ def add_review(request, pk):
     review = Review.objects.create(product=product, user=user, rating=rating, comment=comment)
 
     # Обновляем средний рейтинг товара
-    product.average_rating = product.reviews.aggregate(Avg('rating'))['rating__avg'] or 0.0
+    product.rating = product.reviews.aggregate(Avg('rating'))['rating__avg'] or 0.0
     product.save()
+    return redirect('product_detail', id=pk)
 
 
 def products_of_the_week(request):  #товаров недели
@@ -113,15 +115,5 @@ def products_of_the_week(request):  #товаров недели
 
     return render(request, 'week_products.html', context)
 
-
-def popular_products(request):   #популярных товаров
-    # Находим популярные товары, сортируя их по количеству заказов в убывающем порядке
-    popular_products = Product.objects.annotate(num_orders=Count('order')).order_by('-num_orders')[:5]
-
-    context = {
-        'popular_products': popular_products
-    }
-
-    return render(request, 'products/popular.html', context)
 
 
